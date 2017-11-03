@@ -53,13 +53,21 @@ double read_stack(istream& ins) {
 			ins >> number;
 			numbers.push(number);
 		}
-		else if (strchr("+-*/%^", ins.peek()) != NULL) {
+		else if (strchr("+-*/%^(", ins.peek()) != NULL) {
 			ins >> symbol;
 			operations.push(symbol);
 		}
 		else if (ins.peek() == ')') {
 			ins.ignore();
 			calculate(numbers, operations);
+			if (operations.top() == '(') {
+				operations.pop();
+			}
+			else {
+				while (operations.top() != '(') {
+					calculate(numbers, operations);
+				}
+			}
 		}
 		else
 			ins.ignore();
