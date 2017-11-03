@@ -48,13 +48,14 @@ double read_stack(istream& ins) {
 	int number;
 	char symbol;
 
+	if (ins.peek() == '0') {
+		cout << "end" << endl;
+		return 0;
+	}
+
 	while (ins && ins.peek() != '\n') {
 		//개행 문자가 나올때 까지 읽음
-		if (ins.peek() == '0') {
-			cout << "end" << endl;
-			return 0;
-		}
-
+		
 		if (isdigit(ins.peek())) {
 			ins >> number;
 			std::cout << "number : " << number << endl;
