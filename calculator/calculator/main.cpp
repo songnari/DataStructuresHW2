@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void calculate(stack<int>numbers, stack<char> operations) {
+void calculate(stack<int>& numbers, stack<char>& operations) {
 	//precondition :numbers is not negative integer
 	//postcondition : result is an integer
 	int number1, number2;
@@ -14,7 +14,7 @@ void calculate(stack<int>numbers, stack<char> operations) {
 	number1 = numbers.top();
 	numbers.pop();
 
-	cout << "number : " << number1 << number2 << endl;
+	cout << "number : " << number1 << " ,"<< number2 << endl;
 
 	switch (operations.top()) {
 		//연산자 확인
@@ -48,7 +48,6 @@ double read_stack(istream& ins) {
 	stack<char> operations;
 	int number;
 	char symbol;
-	char temp;
 
 	while (ins && ins.peek() != '\n') {
 		//개행 문자가 나올때 까지 읽음
@@ -64,10 +63,11 @@ double read_stack(istream& ins) {
 			ins.ignore();
 			calculate(numbers, operations);
 		}
-
+		else
+			ins.ignore();
 	}
+	
 	cout << numbers.top();
-	cout << operations.top();
 	
 	return numbers.top();
 }
