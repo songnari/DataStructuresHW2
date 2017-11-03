@@ -49,6 +49,11 @@ double read_stack(istream& ins) {
 
 	while (ins && ins.peek() != '\n') {
 		//개행 문자가 나올때 까지 읽음
+		if (ins.peek() == '0') {
+			cout << "end" << endl;
+			break;
+		}
+
 		if (isdigit(ins.peek())) {
 			ins >> number;
 			std::cout << "number : " << number << endl;
@@ -57,6 +62,8 @@ double read_stack(istream& ins) {
 		else if (strchr("+-*/%^(", ins.peek()) != NULL) {
 			ins >> symbol;
 			std::cout << "operator : " << symbol << endl;
+			if (symbol == '(')
+				operations.push(symbol);
 			if(operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
 				operations.push(symbol);
 			}
@@ -113,11 +120,6 @@ int main() {
 //Only non-negative integers can be input as operands
 //number stack , operations stack
 
-
-//Only 6 binary operators can be used as operators : ^, *, /, %, +, - (+,- < */% < ^)
-
-
 //result is always an integer and it can be a negative integer
-
 
 //When exceptions such as unbalanced parenthesis, "/0" "%0" occur, print "Error!\n" and process next input lines.
