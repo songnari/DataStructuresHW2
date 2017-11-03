@@ -10,14 +10,17 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	//precondition :numbers is not negative integer
 	//postcondition : result is an integer
 	int number1, number2;
+	char symbol;
 	number2 = numbers.top();
 	numbers.pop();
 	number1 = numbers.top();
 	numbers.pop();
+	symbol = operations.top();
+	operations.pop();
 
-	std::cout << "cla : " << number1 << operations.top() << number2 << endl;
+	std::cout << "cal : " << number1 << symbol << number2 << endl;
 
-	switch (operations.top()) {
+	switch (symbol){
 		//연산자 확인
 	case '+':numbers.push(number1 + number2); break;
 	case '-':numbers.push(number1 - number2); break;
@@ -36,9 +39,7 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 		else
 			numbers.push(number1 % number2); break;
 	}
-	operations.pop();
-
-	std::cout << numbers.top() << endl;
+	cout << "result : " << numbers.top() << endl;
 }
 
 double read_stack(istream& ins) {
@@ -51,7 +52,7 @@ double read_stack(istream& ins) {
 		//개행 문자가 나올때 까지 읽음
 		if (ins.peek() == '0') {
 			cout << "end" << endl;
-			break;
+			return 0;
 		}
 
 		if (isdigit(ins.peek())) {
@@ -64,7 +65,7 @@ double read_stack(istream& ins) {
 			std::cout << "operator : " << symbol << endl;
 			if (symbol == '(')
 				operations.push(symbol);
-			if(operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
+			else if(operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
 				operations.push(symbol);
 			}
 			else {
@@ -88,20 +89,21 @@ double read_stack(istream& ins) {
 		}
 		else if (ins.peek() == ')') {
 			ins.ignore();
-			calculate(numbers, operations);
-			if (operations.top() == '(') {
+			while (operations.top() != '(') {
+				calculate(numbers, operations);
+			}
+			if (operations.top() == '(')
 				operations.pop();
-			}
-			else {
-				while (operations.top() != '(') {
-					calculate(numbers, operations);
-				}
-			}
+
 		}
 		else
 			ins.ignore();
 	}
 	//입력된 내용 모두 stack 저장 완료
+
+	while (operations.empty() != 1) {
+		calculate(numbers, operations);
+	}
 
 	//calculate(numbers, operations);
 
