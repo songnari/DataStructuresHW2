@@ -15,7 +15,7 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	number1 = numbers.top();
 	numbers.pop();
 
-	cout << "number : " << number1 << " ,"<< number2 << endl;
+	std::cout << "cla : " << number1 << operations.top() << number2 << endl;
 
 	switch (operations.top()) {
 		//연산자 확인
@@ -34,11 +34,11 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 			printf("Error!\n");
 		}
 		else
-			numbers.push(number1 & number2); break;
+			numbers.push(number1 % number2); break;
 	}
 	operations.pop();
 
-	cout << numbers.top() << endl;
+	std::cout << numbers.top() << endl;
 }
 
 double read_stack(istream& ins) {
@@ -51,11 +51,33 @@ double read_stack(istream& ins) {
 		//개행 문자가 나올때 까지 읽음
 		if (isdigit(ins.peek())) {
 			ins >> number;
+			std::cout << "number : " << number << endl;
 			numbers.push(number);
 		}
 		else if (strchr("+-*/%^(", ins.peek()) != NULL) {
 			ins >> symbol;
-			operations.push(symbol);
+			std::cout << "operator : " << symbol << endl;
+			if(operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
+				operations.push(symbol);
+			}
+			else {
+				if (symbol == '^') {
+					if (operations.top() == '^') {
+						calculate(numbers, operations);
+					}
+					operations.push(symbol);
+				}
+				else if (symbol == '*' || symbol == '/' || symbol == '%') {
+					if (operations.top() == '^') {
+						calculate(numbers, operations);
+					}
+					operations.push(symbol);
+				}
+				else {
+					calculate(numbers, operations);
+					operations.push(symbol);
+				}
+			}
 		}
 		else if (ins.peek() == ')') {
 			ins.ignore();
@@ -72,9 +94,11 @@ double read_stack(istream& ins) {
 		else
 			ins.ignore();
 	}
+	//입력된 내용 모두 stack 저장 완료
+
 	//calculate(numbers, operations);
 
-	cout << numbers.top();
+	std::cout << numbers.top();
 	
 	return numbers.top();
 }
