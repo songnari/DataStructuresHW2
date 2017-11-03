@@ -2,6 +2,7 @@
 #include <stack> 
 #include <cctype>
 #include <cstring>
+#include <cmath>
 
 using namespace std;
 
@@ -27,10 +28,7 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 		}
 		else
 			numbers.push(number1 / number2); break;
-	case '^':
-		for (int i = 0; i < number2; i++)
-			number1 *= number1;
-		numbers.push(number1); break;
+	case '^':numbers.push(pow(number1,number2)); break;
 	case '%':
 		if (number1 == 0 || number2 == 0) {
 			printf("Error!\n");
@@ -66,7 +64,8 @@ double read_stack(istream& ins) {
 		else
 			ins.ignore();
 	}
-	
+	//calculate(numbers, operations);
+
 	cout << numbers.top();
 	
 	return numbers.top();
