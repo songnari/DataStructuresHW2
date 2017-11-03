@@ -1,49 +1,80 @@
 #include <iostream>
 #include <stack> 
+#include <cctype>
+#include <cstring>
+
 using namespace std;
+
+void calculate(stack<int>numbers, stack<char> operations) {
+	//precondition :numbers is not negative integer
+	//postcondition : result is an integer
+	int number1, number2;
+	number2 = numbers.top();
+	numbers.pop();
+	number1 = numbers.top();
+	numbers.pop();
+
+	cout << "number : " << number1 << number2 << endl;
+
+	switch (operations.top()) {
+		//연산자 확인
+	case '+':numbers.push(number1 + number2); break;
+	case '-':numbers.push(number1 - number2); break;
+	case '*':numbers.push(number1 * number2); break;
+	case '/':
+		if (number1 == 0 || number2 == 0) {
+			printf("Error!\n");
+		}
+		else
+			numbers.push(number1 / number2); break;
+	case '^':
+		for (int i = 0; i < number2; i++)
+			number1 *= number1;
+		numbers.push(number1); break;
+	case '%':
+		if (number1 == 0 || number2 == 0) {
+			printf("Error!\n");
+		}
+		else
+			numbers.push(number1 & number2); break;
+	}
+	operations.pop();
+
+	cout << numbers.top() << endl;
+}
+
 double read_stack(istream& ins) {
 	stack<int> numbers;
 	stack<char> operations;
-	double number;
+	int number;
 	char symbol;
+	char temp;
 
-	while (ins &&ins.peek() != '\n') {
+	while (ins && ins.peek() != '\n') {
 		//개행 문자가 나올때 까지 읽음
+		if (isdigit(ins.peek())) {
+			ins >> number;
+			numbers.push(number);
+		}
+		else if (strchr("+-*/%^", ins.peek()) != NULL) {
+			ins >> symbol;
+			operations.push(symbol);
+		}
+		else if (ins.peek() == ')') {
+			ins.ignore();
+			calculate(numbers, operations);
+		}
+
 	}
+	cout << numbers.top();
+	cout << operations.top();
+	
+	return numbers.top();
 }
 
-void calcualate(stack<int>numbers, stack<char> operations) {
-	//precondition :numbers is not negative integer
-	//postcondition : result is an integer
-	int operand1, operand2;
-	operand2 = numbers.top();
-	numbers.pop();
-	operand1 = numbers.top();
-	numbers.pop();
+int main() {
 	
-	switch (operations.top()) {
-		//연산자 확인
-	case '+':numbers.push(operand1 + operand2); break;
-	case '-':numbers.push(operand1 - operand2); break;
-	case '*':numbers.push(operand1 * operand2); break;
-	case '/':
-		if (operand1 == 0 || operand2 == 0) {
-			printf("Error!\n");
-		}
-		else
-			numbers.push(operand1 / operand2); break;
-	case '^' :
-		for (int i = 0; i < operand2; i++)
-			operand1 *= operand1;
-		numbers.push(operand1); break;
-	case '%':
-		if (operand1 == 0 || operand2 == 0) {
-			printf("Error!\n");
-		}
-		else
-			numbers.push(operand1 & operand2); break;
-	}
-	operations.pop();
+	read_stack(cin);
 }
 
 //empty 비어있는지 확인, size 사이즈 반환, top 위에있는 인자 확인, push 데이터 삽입, pop top의 데이터 삭제
