@@ -68,81 +68,87 @@ double read_stack(istream& ins) {
 	int number;
 	char symbol;
 
-	if (ins.peek() == '0') {
-		cout << "end" << endl;
-		return 0;
-	}
-
-	while (ins && ins.peek() != '\n') {
-		//개행 문자가 나올때 까지 읽음
-		if (operations.empty() != 1 && operations.top() == 'E')
-			break;
-		if (isdigit(ins.peek())) {
-			ins >> number;
-			std::cout << "number : " << number << endl;
-			numbers.push(number);
+	while (1) {
+		if (ins.peek() == '0') {
+			cout << "end" << endl;
+			return 0;
 		}
-		else if (strchr("+-*/%^(", ins.peek()) != NULL) {
-			ins >> symbol;
-			std::cout << "operator : " << symbol << endl;
-		
-			if (symbol == '(')
-				operations.push(symbol);
-			else if (operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
-				operations.push(symbol);
-			}
 
-			else {
-				if (symbol == '^') {
-					if (operations.top() == '^') {
-						calculate(numbers, operations);
-					}
-					if (operations.empty() != 1 && operations.top() == 'E')
-						break;
-					else
-						operations.push(symbol);
+		while (ins && ins.peek() != '\n') {
+			//개행 문자가 나올때 까지 읽음
+			if (operations.empty() != 1 && operations.top() == 'E')
+				break;
+			if (isdigit(ins.peek())) {
+				ins >> number;
+				std::cout << "number : " << number << endl;
+				numbers.push(number);
+			}
+			else if (strchr("+-*/%^(", ins.peek()) != NULL) {
+				ins >> symbol;
+				std::cout << "operator : " << symbol << endl;
+
+				if (symbol == '(')
+					operations.push(symbol);
+				else if (operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
+					operations.push(symbol);
 				}
-				else if (symbol == '*' || symbol == '/' || symbol == '%') {
-					if (operations.top() == '^') {
-						calculate(numbers, operations);
-					}
-					if (operations.empty() != 1 && operations.top() == 'E')
-						break;
-					else
-						operations.push(symbol);
-				}
+
 				else {
+					if (symbol == '^') {
+						if (operations.top() == '^') {
+							calculate(numbers, operations);
+						}
+						if (operations.empty() != 1 && operations.top() == 'E')
+							break;
+						else
+							operations.push(symbol);
+					}
+					else if (symbol == '*' || symbol == '/' || symbol == '%') {
+						if (operations.top() == '^') {
+							calculate(numbers, operations);
+						}
+						if (operations.empty() != 1 && operations.top() == 'E')
+							break;
+						else
+							operations.push(symbol);
+					}
+					else {
+						calculate(numbers, operations);
+						if (operations.empty() != 1 && operations.top() == 'E')
+							break;
+						else
+							operations.push(symbol);
+					}
+				}
+			}
+			else if (ins.peek() == ')') {
+				ins.ignore();
+				while (operations.top() != '(') {
 					calculate(numbers, operations);
 					if (operations.empty() != 1 && operations.top() == 'E')
 						break;
-					else
-						operations.push(symbol);
 				}
+				if (operations.top() == '(')
+					operations.pop();
+
 			}
+			else
+				ins.ignore();
 		}
-		else if (ins.peek() == ')') {
+		if (ins.peek() == '\n')
 			ins.ignore();
-			while (operations.top() != '(') {
-				calculate(numbers, operations);
-				if (operations.empty() != 1 && operations.top() == 'E')
-					break;
-			}
-			if (operations.top() == '(')
-				operations.pop();
+		//입력된 내용 모두 stack 저장 완료
 
+
+		while (operations.empty() != 1) {
+			if (operations.top() == 'E')
+				break;
+			calculate(numbers, operations);
 		}
-		else
-			ins.ignore();
+
+		if (operations.empty() != 1 && operations.top() == 'E')
+			operations.pop();
 	}
-	//입력된 내용 모두 stack 저장 완료
-
-
-	while (operations.empty() != 1) {
-		if (operations.top() == 'E')
-			break;
-		calculate(numbers, operations);
-	}
-
 	if (numbers.empty() == 1)
 		return 0;
 	else
@@ -154,8 +160,6 @@ int main() {
 
 	read_stack(cin);
 }
-
-//empty 비어있는지 확인, size 사이즈 반환, top 위에있는 인자 확인, push 데이터 삽입, pop top의 데이터 삭제
 
 //Only non-negative integers can be input as operands
 //number stack , operations stack
