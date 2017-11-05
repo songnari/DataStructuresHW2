@@ -11,7 +11,6 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	//postcondition : result is an integer
 	int number1, number2;
 	char symbol;
-	int error = 0;
 	number2 = numbers.top();
 	numbers.pop();
 	number1 = numbers.top();
@@ -29,7 +28,6 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	case '/':
 		if (number1 == 0 || number2 == 0) {
 			printf("Error!\n");
-			error = 1;
 			while (numbers.empty() != 1)
 				numbers.pop();
 			while (operations.empty() != 1)
@@ -42,7 +40,6 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	case '%':
 		if (number1 == 0 || number2 == 0) {
 			printf("Error!\n");
-			error = 1;
 			while (numbers.empty() != 1)
 				numbers.pop();
 			while (operations.empty() != 1)
@@ -52,7 +49,7 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 		else
 			numbers.push(number1 % number2); break;
 	}
-	if (error == 0)
+	if (numbers.empty() != 1)
 		cout << "result : " << numbers.top() << endl;
 }
 
