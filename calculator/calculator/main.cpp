@@ -11,46 +11,55 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	//postcondition : result is an integer
 	int number1, number2;
 	char symbol;
-	number2 = numbers.top();
-	numbers.pop();
-	number1 = numbers.top();
-	numbers.pop();
-	symbol = operations.top();
-	operations.pop();
 
-	std::cout << "cal : " << number1 << symbol << number2 << endl;
+	if (numbers.empty() != 1) {
+		number2 = numbers.top();
+		numbers.pop();
+		number1 = numbers.top();
+		numbers.pop();
+		symbol = operations.top();
+		operations.pop();
 
-	switch (symbol){
-		//연산자 확인
-	case '+':numbers.push(number1 + number2); break;
-	case '-':numbers.push(number1 - number2); break;
-	case '*':numbers.push(number1 * number2); break;
-	case '/':
-		if (number1 == 0 || number2 == 0) {
-			printf("Error!\n");
-			while (numbers.empty() != 1)
-				numbers.pop();
-			while (operations.empty() != 1)
-				operations.pop();
-			break;
+		std::cout << "cal : " << number1 << symbol << number2 << endl;
+
+		switch (symbol) {
+			//연산자 확인
+		case '+':numbers.push(number1 + number2); break;
+		case '-':numbers.push(number1 - number2); break;
+		case '*':numbers.push(number1 * number2); break;
+		case '/':
+			if (number1 == 0 || number2 == 0) {
+				printf("Error!\n");
+				while (numbers.empty() != 1)
+					numbers.pop();
+				while (operations.empty() != 1)
+					operations.pop();
+				operations.push('E');
+				break;
+			}
+			else
+				numbers.push(number1 / number2); break;
+		case '^':numbers.push(pow(number1, number2)); break;
+		case '%':
+			if (number1 == 0 || number2 == 0) {
+				printf("Error!\n");
+				while (numbers.empty() != 1)
+					numbers.pop();
+				while (operations.empty() != 1)
+					operations.pop();
+				operations.push('E');
+				break;
+			}
+			else
+				numbers.push(number1 % number2); break;
 		}
-		else
-			numbers.push(number1 / number2); break;
-	case '^':numbers.push(pow(number1,number2)); break;
-	case '%':
-		if (number1 == 0 || number2 == 0) {
-			printf("Error!\n");
-			while (numbers.empty() != 1)
-				numbers.pop();
-			while (operations.empty() != 1)
-				operations.pop();
-			break;
+
+		if (numbers.empty() != 1) {
+			if (operations.empty() != 1 && operations.top() == 'E')
+				cout << "EEEEE" << endl;
+			cout << "result : " << numbers.top() << endl;
 		}
-		else
-			numbers.push(number1 % number2); break;
 	}
-	if (numbers.empty() != 1)
-		cout << "result : " << numbers.top() << endl;
 }
 
 double read_stack(istream& ins) {
@@ -66,7 +75,8 @@ double read_stack(istream& ins) {
 
 	while (ins && ins.peek() != '\n') {
 		//개행 문자가 나올때 까지 읽음
-
+		if (operations.empty() != 1 && operations.top() == 'E')
+			break;
 		if (isdigit(ins.peek())) {
 			ins >> number;
 			std::cout << "number : " << number << endl;
@@ -75,27 +85,38 @@ double read_stack(istream& ins) {
 		else if (strchr("+-*/%^(", ins.peek()) != NULL) {
 			ins >> symbol;
 			std::cout << "operator : " << symbol << endl;
+		
 			if (symbol == '(')
 				operations.push(symbol);
 			else if (operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
 				operations.push(symbol);
 			}
+
 			else {
 				if (symbol == '^') {
 					if (operations.top() == '^') {
 						calculate(numbers, operations);
 					}
-					operations.push(symbol);
+					if (operations.empty() != 1 && operations.top() == 'E')
+						break;
+					else
+						operations.push(symbol);
 				}
 				else if (symbol == '*' || symbol == '/' || symbol == '%') {
 					if (operations.top() == '^') {
 						calculate(numbers, operations);
 					}
-					operations.push(symbol);
+					if (operations.empty() != 1 && operations.top() == 'E')
+						break;
+					else
+						operations.push(symbol);
 				}
 				else {
 					calculate(numbers, operations);
-					operations.push(symbol);
+					if (operations.empty() != 1 && operations.top() == 'E')
+						break;
+					else
+						operations.push(symbol);
 				}
 			}
 		}
@@ -103,6 +124,8 @@ double read_stack(istream& ins) {
 			ins.ignore();
 			while (operations.top() != '(') {
 				calculate(numbers, operations);
+				if (operations.empty() != 1 && operations.top() == 'E')
+					break;
 			}
 			if (operations.top() == '(')
 				operations.pop();
@@ -113,16 +136,17 @@ double read_stack(istream& ins) {
 	}
 	//입력된 내용 모두 stack 저장 완료
 
+
 	while (operations.empty() != 1) {
+		if (operations.top() == 'E')
+			break;
 		calculate(numbers, operations);
 	}
-
-	//std::cout << numbers.top();
 
 	if (numbers.empty() == 1)
 		return 0;
 	else
-		return numbers.top();
+		return 1;
 
 }
 
