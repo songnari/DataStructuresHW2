@@ -11,6 +11,7 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	//postcondition : result is an integer
 	int number1, number2;
 	char symbol;
+	int error = 0;
 	number2 = numbers.top();
 	numbers.pop();
 	number1 = numbers.top();
@@ -28,6 +29,12 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	case '/':
 		if (number1 == 0 || number2 == 0) {
 			printf("Error!\n");
+			error = 1;
+			while (numbers.empty() != 1)
+				numbers.pop();
+			while (operations.empty() != 1)
+				operations.pop();
+			break;
 		}
 		else
 			numbers.push(number1 / number2); break;
@@ -35,11 +42,14 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 	case '%':
 		if (number1 == 0 || number2 == 0) {
 			printf("Error!\n");
+			error = 1;
+			break;
 		}
 		else
 			numbers.push(number1 % number2); break;
 	}
-	cout << "result : " << numbers.top() << endl;
+	if (error == 0)
+		cout << "result : " << numbers.top() << endl;
 }
 
 double read_stack(istream& ins) {
@@ -55,7 +65,7 @@ double read_stack(istream& ins) {
 
 	while (ins && ins.peek() != '\n') {
 		//개행 문자가 나올때 까지 읽음
-		
+
 		if (isdigit(ins.peek())) {
 			ins >> number;
 			std::cout << "number : " << number << endl;
@@ -66,7 +76,7 @@ double read_stack(istream& ins) {
 			std::cout << "operator : " << symbol << endl;
 			if (symbol == '(')
 				operations.push(symbol);
-			else if(operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
+			else if (operations.empty() == 1 || operations.top() == '(') { //stack이 비어있을 때
 				operations.push(symbol);
 			}
 			else {
@@ -106,15 +116,15 @@ double read_stack(istream& ins) {
 		calculate(numbers, operations);
 	}
 
-	//calculate(numbers, operations);
-
 	std::cout << numbers.top();
-	
+
+
 	return numbers.top();
+
 }
 
 int main() {
-	
+
 	read_stack(cin);
 }
 
