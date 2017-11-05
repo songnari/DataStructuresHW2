@@ -43,6 +43,10 @@ void calculate(stack<int>& numbers, stack<char>& operations) {
 		if (number1 == 0 || number2 == 0) {
 			printf("Error!\n");
 			error = 1;
+			while (numbers.empty() != 1)
+				numbers.pop();
+			while (operations.empty() != 1)
+				operations.pop();
 			break;
 		}
 		else
@@ -116,10 +120,12 @@ double read_stack(istream& ins) {
 		calculate(numbers, operations);
 	}
 
-	std::cout << numbers.top();
+	//std::cout << numbers.top();
 
-
-	return numbers.top();
+	if (numbers.empty() == 1)
+		return 0;
+	else
+		return numbers.top();
 
 }
 
